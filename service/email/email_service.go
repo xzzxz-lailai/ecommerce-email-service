@@ -6,7 +6,7 @@ import (
 	"email-service/pkg"
 	"email-service/repo"
 	"email-service/smtp"
-	emailtemplate "email-service/template"
+	"email-service/template"
 )
 
 // SendEmailCode 发送邮箱验证码
@@ -25,7 +25,7 @@ func SendEmailCode(ctx context.Context, req *model.SendEmailCodeRequest) error {
 	}
 
 	// 4. 根据验证码类型选择邮件模板
-	subject, body, err := emailtemplate.BuildEmailContent(req.CodeType, code)
+	subject, body, err := template.BuildEmailContent(req.CodeType, code)
 	if err != nil {
 		return err
 	}
