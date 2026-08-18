@@ -13,5 +13,5 @@ func InitRedis() {
 		DB:       Cfg.Redis.DB,
 	})
 	global.RDB = rdb
-	fmt.Println("✅ Redis 连接成功！")
+	fmt.Println("✅ Redis 连接成功")
 }

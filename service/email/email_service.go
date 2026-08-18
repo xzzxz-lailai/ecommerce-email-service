@@ -27,14 +27,11 @@ func SendEmailCode(ctx context.Context, req *model.SendEmailCodeRequest) error {
 	// 4. 根据验证码类型选择邮件模板
 	subject, body, err := emailtemplate.BuildEmailContent(req.CodeType, code)
 	if err != nil {
-		_ = repo.DeleteCodeFromRedis(ctx, req.Email, req.CodeType)
 		return err
 	}
 
 	// 5. 发送邮件
 	if err := sendEmail(ctx, req.Email, subject, body); err != nil {
-		// 如果邮件发送失败,就删除 redis 里的验证码
-		_ = repo.DeleteCodeFromRedis(ctx, req.Email, req.CodeType)
 		return err
 	}
 
@@ -47,17 +44,19 @@ func VerifyEmailCode(ctx context.Context, req *model.VerifyEmailCodeRequest) err
 	if err := pkg.ValidateCodeType(req.CodeType); err != nil {
 		return err
 	}
-	// 2. 校验验证码是否正确
+	// 2. 从 Redis 比对验证码
 	if err := repo.VerifyCodeFromRedis(ctx, req.Email, req.CodeType, req.Code); err != nil {
 		return err
 	}
-	// 3. 验证成功后删除验证码,避免重复使用
-	return repo.DeleteCodeFromRedis(ctx, req.Email, req.CodeType)
+	// 3. 验证成功后删除验证码，避免重复使用
+	if err := repo.DeleteCodeFromRedis(ctx, req.Email, req.CodeType); err != nil {
+		return err
+	}
+	return nil
 }
 
-// sendEmail 发送邮件
 func sendEmail(ctx context.Context, to, subject, body string) error {
-	// 调用smtp发送
+	// 发送邮件
 	if err := smtp.Send(to, subject, body); err != nil {
 		return err
 	}

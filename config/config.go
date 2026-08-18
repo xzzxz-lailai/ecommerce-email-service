@@ -23,10 +23,17 @@ type RedisConfig struct {
 	Pass string `mapstructure:"pass"`
 	DB   int    `mapstructure:"db"`
 }
+type EtcdConfig struct {
+	Host         string `mapstructure:"host"` // etcd 服务地址
+	ServerName   string `mapstructure:"server_name"`
+	ServeAddress string `mapstructure:"address"`
+}
+
 type Config struct {
 	Server    ServerConfig
 	EmailSmtp EmailSmtpConfig
 	Redis     RedisConfig
+	Etcd      EtcdConfig
 }
 
 var Cfg Config

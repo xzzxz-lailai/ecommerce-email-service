@@ -5,7 +5,7 @@ import (
 
 	"email-service/model"
 	"email-service/pkg"
-	emailservice "email-service/service/email"
+	email "email-service/service/email"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,7 +21,7 @@ func SendEmailCode(c *gin.Context) {
 	}
 
 	// 调用 Service
-	if err := emailservice.SendEmailCode(c.Request.Context(), &req); err != nil {
+	if err := email.SendEmailCode(c.Request.Context(), &req); err != nil {
 		pkg.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -41,7 +41,7 @@ func VerifyEmailCode(c *gin.Context) {
 	}
 
 	// 调用 Service
-	if err := emailservice.VerifyEmailCode(c.Request.Context(), &req); err != nil {
+	if err := email.VerifyEmailCode(c.Request.Context(), &req); err != nil {
 		pkg.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
